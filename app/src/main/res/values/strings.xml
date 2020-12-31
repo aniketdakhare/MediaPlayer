@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Media Player</string>
+    <string name="title_home">Home</string>
+    <string name="setting">Setting</string>
+    <string name="facebook_app_id">392311511833824</string>
+    <string name="fb_login_protocol_scheme">fb392311511833824</string>
+    <string name="media_player">Media Player</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="new_here_create_account">New here? Create Account</string>
+    <string name="email">Email Id</string>
+    <string name="password">Password</string>
+
 </resources>
