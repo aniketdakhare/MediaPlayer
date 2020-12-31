@@ -16,5 +16,8 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
     <string name="already_have_an_account_login_here">Already have an account? Login here.</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="profile_email">Profile Email</string>
+    <string name="signout">SignOut</string>
 
 </resources>
