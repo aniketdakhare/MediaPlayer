@@ -79,7 +79,7 @@ class LoginFragment : Fragment() {
         loginViewModel.authenticateUser(email, password)
 
         loginViewModel.userAuthenticationStatus.observe(viewLifecycleOwner, Observer {
-            Log.e(TAG, "checkLoginDetails: ${it}" )
+            Log.e(TAG, "checkLoginDetails: $it" )
             when (it) {
                 is Failed -> {
                     when (it.reason) {
