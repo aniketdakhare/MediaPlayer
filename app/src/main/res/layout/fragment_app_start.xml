@@ -7,14 +7,14 @@
 
         <variable
             name="appStartViewModel"
-            type="com.example.mediaplayer.appstartpage.viewmodel.AppStartViewModel" />
+            type="com.example.mediaplayer.ui.appstartpage.viewmodel.AppStartViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background"
-        tools:context=".appstartpage.view.AppStartFragment">
+        tools:context=".ui.appstartpage.view.AppStartFragment">
 
         <TextView
             android:id="@+id/fundooTextView"

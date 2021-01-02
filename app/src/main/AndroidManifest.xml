@@ -11,7 +11,7 @@
         android:roundIcon="@drawable/mediaplayer"
         android:supportsRtl="true"
         android:theme="@style/Theme.MediaPlayer">
-        <activity android:name=".mainactivity.view.MainActivity">
+        <activity android:name=".ui.mainactivity.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -6,14 +6,14 @@
     <data>
         <variable
             name="settingViewModel"
-            type="com.example.mediaplayer.setting.viewmodel.SettingViewModel" />
+            type="com.example.mediaplayer.ui.setting.viewmodel.SettingViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background"
-        tools:context=".setting.view.SettingFragment">
+        tools:context=".ui.setting.view.SettingFragment">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImageView"

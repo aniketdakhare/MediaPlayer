@@ -6,14 +6,14 @@
     <data>
         <variable
             name="registerViewModel"
-            type="com.example.mediaplayer.register.viewmodel.RegisterViewModel" />
+            type="com.example.mediaplayer.ui.register.viewmodel.RegisterViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background"
-        tools:context=".register.view.RegisterFragment">
+        tools:context=".ui.register.view.RegisterFragment">
 
         <TextView
             android:id="@+id/fundooRegister"
