@@ -2,6 +2,7 @@ package com.example.mediaplayer.ui.mainactivity.view
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuItemCompat
@@ -18,6 +19,7 @@ import com.example.mediaplayer.ui.register.view.RegisterFragment
 import com.example.mediaplayer.ui.setting.view.SettingFragment
 import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModel
 import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModelFactory
+import com.example.mediaplayer.ui.videouploadpage.view.UploadVideoFragment
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : AppCompatActivity() {
@@ -112,6 +114,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun goToUploadVideoPage() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.nav_host_fragment, UploadVideoFragment())
+            addToBackStack(null)
+            commit()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.home_toolbar_menu, menu)
 
@@ -126,5 +136,12 @@ class MainActivity : AppCompatActivity() {
                 Glide.with(this).load(it.imageUrl).into(profileImage)
         })
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.upload -> goToUploadVideoPage()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
