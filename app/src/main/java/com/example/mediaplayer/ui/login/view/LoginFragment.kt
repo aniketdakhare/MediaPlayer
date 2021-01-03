@@ -99,7 +99,7 @@ class LoginFragment : Fragment() {
                     }
                 }
                 is Succeed -> loginUser(it)
-                Loading -> binding.loginProgressBar.visibility = View.VISIBLE
+                is Loading -> binding.loginProgressBar.visibility = View.VISIBLE
             }
         })
     }

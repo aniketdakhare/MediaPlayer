@@ -115,7 +115,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                     }
                 }
                 is Succeed -> registerUser(it.message)
-                Loading -> binding.registerProgressBar.visibility = View.VISIBLE
+                is Loading -> binding.registerProgressBar.visibility = View.VISIBLE
             }
         })
     }

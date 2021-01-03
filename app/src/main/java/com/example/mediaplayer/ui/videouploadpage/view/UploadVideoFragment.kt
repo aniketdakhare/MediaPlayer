@@ -1,24 +1,31 @@
 package com.example.mediaplayer.ui.videouploadpage.view
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
+import android.webkit.MimeTypeMap
 import androidx.fragment.app.Fragment
 import android.widget.MediaController
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.example.mediaplayer.R
 import com.example.mediaplayer.data.UserRepository
+import com.example.mediaplayer.data.VideoRepository
+import com.example.mediaplayer.data.model.VideoDetails
 import com.example.mediaplayer.databinding.FragmentUploadVideoBinding
 import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModel
 import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModelFactory
 import com.example.mediaplayer.ui.videouploadpage.viewmodel.UploadVideoViewModel
 import com.example.mediaplayer.ui.videouploadpage.viewmodel.UploadVideoViewModelFactory
+import com.example.mediaplayer.util.Failed
+import com.example.mediaplayer.util.Loading
+import com.example.mediaplayer.util.Succeed
 import kotlinx.android.synthetic.main.activity_main.*
 
 class UploadVideoFragment : Fragment() {
@@ -32,7 +39,7 @@ class UploadVideoFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadVideoViewModel = ViewModelProvider(
-            this, UploadVideoViewModelFactory()
+            this, UploadVideoViewModelFactory(VideoRepository())
         )[UploadVideoViewModel::class.java]
         sharedViewModel = ViewModelProvider(
             requireActivity(), SharedViewModelFactory(UserRepository())
@@ -45,7 +52,8 @@ class UploadVideoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_upload_video, container, false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_upload_video, container, false)
         binding.uploadVideoViewModel = uploadVideoViewModel
         binding.lifecycleOwner = this
         return binding.root
@@ -56,19 +64,14 @@ class UploadVideoFragment : Fragment() {
         mediaController = MediaController(requireContext())
         binding.videoView.setMediaController(mediaController)
         binding.videoView.start()
-        binding.browseButton.setOnClickListener{
+        binding.browseButton.setOnClickListener {
             val openGalleryIntent =
                 Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(openGalleryIntent, 220)
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-        if (requestCode == 220 && resultCode == Activity.RESULT_OK)
-            intent?.data?.let {
-                binding.videoView.setVideoURI(it)
-            }
+        binding.uploadButton.setOnClickListener {
+            uploadVideo()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,6 +80,45 @@ class UploadVideoFragment : Fragment() {
             (activity as AppCompatActivity).supportFragmentManager.popBackStack()
         }
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (requestCode == 220 && resultCode == Activity.RESULT_OK)
+            intent?.data?.let {
+                videoUri = it
+                binding.videoView.setVideoURI(it)
+            }
+    }
+
+    private fun uploadVideo() {
+        val pd = ProgressDialog(requireContext())
+        pd.setTitle("Video Uploader")
+        pd.show()
+
+        val title = binding.videoTittle.text.toString()
+        val fileName = "${System.currentTimeMillis()}.${getExtension()}"
+        uploadVideoViewModel.uploadVideo(VideoDetails(videoUri, title, fileName))
+
+        uploadVideoViewModel.videoUploadingStatus.observe(viewLifecycleOwner, {
+            when (it) {
+                is Succeed ->{
+                    pd.dismiss()
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+                is Failed ->{
+                    pd.dismiss()
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+                is Loading -> pd.setMessage(it.message)
+            }
+        })
+    }
+
+    private fun getExtension(): String {
+        val mimeTypeMap = MimeTypeMap.getSingleton()
+        return mimeTypeMap.getExtensionFromMimeType(context?.contentResolver?.getType(videoUri))
+            .toString()
     }
 
     override fun onStop() {

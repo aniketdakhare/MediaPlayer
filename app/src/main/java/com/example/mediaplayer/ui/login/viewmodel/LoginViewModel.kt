@@ -25,7 +25,7 @@ class LoginViewModel(private val userRepository: IUserRepository) : ViewModel() 
     val userDetails = _userDetails as LiveData<User>
 
     fun authenticateUser(email: String, password: String) {
-        _userAuthenticationStatus.value = Loading
+        _userAuthenticationStatus.value = Loading()
         when {
             email.isEmpty() -> _userAuthenticationStatus.value =
                 Failed("Please Enter Email Id", FailingReason.EMAIL)
