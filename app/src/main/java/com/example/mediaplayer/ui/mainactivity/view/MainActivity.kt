@@ -27,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var profileImage: CircleImageView
+    private var menuStatus = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +68,9 @@ class MainActivity : AppCompatActivity() {
         })
         sharedViewModel.goToLoginPageStatus.observe(this, {
             if (it == true) goToLoginUserPage()
+        })
+        sharedViewModel.uploadMenuStatus.observe(this, {
+            menuStatus = it
         })
     }
 
@@ -123,18 +128,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.home_toolbar_menu, menu)
+        if (menuStatus) {
+            menuInflater.inflate(R.menu.home_toolbar_menu, menu)
 
-        val profileItem = menu?.findItem(R.id.profile_menu)
-        val view = MenuItemCompat.getActionView(profileItem)
-        profileImage = view.findViewById(R.id.toolbar_profile_image)
-        sharedViewModel.imageUri.observe(this, {
-            if (it != null) Glide.with(this).load(it).into(profileImage)
-        })
-        sharedViewModel.userDetails.observe(this, {
-            if (it.imageUrl != "")
-                Glide.with(this).load(it.imageUrl).into(profileImage)
-        })
+            val profileItem = menu?.findItem(R.id.profile_menu)
+            val view = MenuItemCompat.getActionView(profileItem)
+            profileImage = view.findViewById(R.id.toolbar_profile_image)
+            sharedViewModel.imageUri.observe(this, {
+                if (it != null) Glide.with(this).load(it).into(profileImage)
+            })
+            sharedViewModel.userDetails.observe(this, {
+                if (it.imageUrl != "")
+                    Glide.with(this).load(it.imageUrl).into(profileImage)
+            })
+        }
         return super.onCreateOptionsMenu(menu)
     }
 

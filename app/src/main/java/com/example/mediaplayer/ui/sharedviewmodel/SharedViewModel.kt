@@ -15,6 +15,9 @@ class SharedViewModel(
         fetchUserDetails()
     }
 
+    private val _uploadMenuStatus = MutableLiveData<Boolean>()
+    val uploadMenuStatus = _uploadMenuStatus as LiveData<Boolean>
+
     private val _goToRegisterPageStatus = MutableLiveData<Boolean>()
     val goToRegisterPageStatus = _goToRegisterPageStatus as LiveData<Boolean>
 
@@ -61,6 +64,10 @@ class SharedViewModel(
 
     fun setUserDetails(user: User) {
         _userDetails.value = user
+    }
+
+    fun setUploadMenuStatus(status: Boolean) {
+        _uploadMenuStatus.value = status
     }
 
     companion object {
