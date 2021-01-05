@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import android.widget.MediaController
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.mediaplayer.R
@@ -92,6 +93,7 @@ class UploadVideoFragment : Fragment() {
     }
 
     private fun uploadVideo() {
+        binding.videoView.pause()
         val pd = ProgressDialog(requireContext())
         pd.setTitle("Video Uploader")
         pd.show()
@@ -105,10 +107,12 @@ class UploadVideoFragment : Fragment() {
                 is Succeed ->{
                     pd.dismiss()
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    binding.videoView.resume()
                 }
                 is Failed ->{
                     pd.dismiss()
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    binding.videoView.resume()
                 }
                 is Loading -> pd.setMessage(it.message)
             }
