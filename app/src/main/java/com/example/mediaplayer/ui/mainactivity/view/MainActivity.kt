@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -130,19 +131,35 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (menuStatus) {
             menuInflater.inflate(R.menu.home_toolbar_menu, menu)
-
-            val profileItem = menu?.findItem(R.id.profile_menu)
-            val view = MenuItemCompat.getActionView(profileItem)
-            profileImage = view.findViewById(R.id.toolbar_profile_image)
-            sharedViewModel.imageUri.observe(this, {
-                if (it != null) Glide.with(this).load(it).into(profileImage)
-            })
-            sharedViewModel.userDetails.observe(this, {
-                if (it.imageUrl != "")
-                    Glide.with(this).load(it.imageUrl).into(profileImage)
-            })
+            homeToolbarMenu(menu)
         }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun homeToolbarMenu(menu: Menu?) {
+        val profileItem = menu?.findItem(R.id.profile_menu)
+        val view = MenuItemCompat.getActionView(profileItem)
+        profileImage = view.findViewById(R.id.toolbar_profile_image)
+        sharedViewModel.imageUri.observe(this, {
+            if (it != null) Glide.with(this).load(it).into(profileImage)
+        })
+        sharedViewModel.userDetails.observe(this, {
+            if (it.imageUrl != "")
+                Glide.with(this).load(it.imageUrl).into(profileImage)
+        })
+
+        val searchItem = menu?.findItem(R.id.search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                sharedViewModel.setQueryText(newText)
+                return false
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

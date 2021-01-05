@@ -7,15 +7,16 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mediaplayer.R
 import com.example.mediaplayer.data.model.Video
-import com.example.mediaplayer.data.model.VideoDetails
+import com.firebase.ui.firestore.paging.FirestorePagingAdapter
+import com.firebase.ui.firestore.paging.FirestorePagingOptions
 
 class VideoViewAdapter(
-    val videos: List<Video>,
-) : RecyclerView.Adapter<VideoViewHolder>(), Filterable {
+    options: FirestorePagingOptions<Video>,
+) : FirestorePagingAdapter<Video, VideoViewHolder>(options) {
 
-    private val allVideos = mutableListOf<Video>().apply {
-        addAll(videos)
-    }
+//    private val allVideos = mutableListOf<Video>().apply {
+//        addAll(videos)
+//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val displayView = LayoutInflater.from(parent.context)
@@ -23,48 +24,46 @@ class VideoViewAdapter(
         return VideoViewHolder(displayView)
     }
 
-    override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
-        val video = allVideos[position]
+//    override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+//        val video = allVideos[position]
+//        holder.bind(video)
+//        holder.view.setOnClickListener {
+//        }
+//    }
+
+    override fun onBindViewHolder(holder: VideoViewHolder, position: Int, video: Video) {
         holder.bind(video)
-        holder.view.setOnClickListener {
-        }
+        holder.view.setOnClickListener {  }
     }
 
-    override fun getItemCount(): Int {
-        return allVideos.size
-    }
-
-    override fun getFilter(): Filter {
-        return searchFilter
-    }
-
-    private val searchFilter = object : Filter() {
-        override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val filteredList = mutableListOf<Video>()
-
-            if (constraint.toString().isEmpty())
-                filteredList.addAll(videos)
-            else {
-                for (note in videos) {
-                    if (note.videoTitle.toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        filteredList.add(note)
-                    }
-                }
-            }
-
-            val filterResults = FilterResults()
-            filterResults.values = filteredList
-
-            return filterResults
-        }
-
-        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-            allVideos.clear()
-            allVideos.addAll(results?.values as Collection<Video>)
-            notifyDataSetChanged()
-        }
-    }
-
-
-
+//    override fun getFilter(): Filter {
+//        return searchFilter
+//    }
+//
+//    private val searchFilter = object : Filter() {
+//        override fun performFiltering(constraint: CharSequence?): FilterResults {
+//            val filteredList = mutableListOf<Video>()
+//
+//            if (constraint.toString().isEmpty())
+//                filteredList.addAll(videos)
+//            else {
+//                for (note in videos) {
+//                    if (note.title.toLowerCase().contains(constraint.toString().toLowerCase())) {
+//                        filteredList.add(note)
+//                    }
+//                }
+//            }
+//
+//            val filterResults = FilterResults()
+//            filterResults.values = filteredList
+//
+//            return filterResults
+//        }
+//
+//        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+//            allVideos.clear()
+//            allVideos.addAll(results?.values as Collection<Video>)
+//            notifyDataSetChanged()
+//        }
+//    }
 }

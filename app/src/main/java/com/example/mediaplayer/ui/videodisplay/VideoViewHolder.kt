@@ -13,8 +13,8 @@ class VideoViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
     private val tittle: TextView = view.findViewById(R.id.cardTitle)
 
     fun bind(videoDetails: Video) {
-        tittle.text = videoDetails.videoTitle
+        tittle.text = videoDetails.title
 //        videoView.start()
-        videoView.setVideoURI(Uri.parse(videoDetails.videoUrl))
+        videoView.setVideoURI(Uri.parse(videoDetails.url))
     }
 }

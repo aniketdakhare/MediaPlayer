@@ -1,15 +1,18 @@
 package com.example.mediaplayer.data
 
 import android.net.Uri
-import com.example.mediaplayer.data.model.Video
 import com.example.mediaplayer.data.model.VideoDetails
-import com.example.mediaplayer.util.*
+import com.example.mediaplayer.util.Failed
 import com.example.mediaplayer.util.FailingReason.OTHER
+import com.example.mediaplayer.util.Loading
+import com.example.mediaplayer.util.Status
+import com.example.mediaplayer.util.Succeed
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import java.io.FileInputStream
 
 class VideoRepository : IVideoRepository {
     private lateinit var firebaseAuth: FirebaseAuth
@@ -43,6 +46,7 @@ class VideoRepository : IVideoRepository {
     private fun uploadVideoToFireStore(videoTitle: String, uri: Uri, callback: (Status) -> Unit) {
         val videoDetails: MutableMap<String, Any> = HashMap()
 
+        videoDetails[VIDEO_LOWERCASE_TITLE] = videoTitle.toLowerCase()
         videoDetails[VIDEO_TITLE] = videoTitle
         videoDetails[VIDEO_URL] = uri.toString()
         videoDetails[USER] = firebaseAuth.currentUser!!.uid
@@ -53,26 +57,19 @@ class VideoRepository : IVideoRepository {
             .addOnFailureListener { callback(Failed("Error while Uploading video", OTHER)) }
     }
 
-    override fun fetchVideosFromFireStore(callback: (List<Video>) -> Unit) {
-        fireStore.collection(VIDEO_COLLECTION).addSnapshotListener { querySnapshot, _ ->
-            val videos: MutableList<Video> = mutableListOf()
-            if (querySnapshot != null) {
-                for (document in querySnapshot) {
-                    videos.add(
-                        Video(
-                            document.getString(VIDEO_URL).toString(),
-                            document.getString(VIDEO_TITLE).toString(),
-                        )
-                    )
-                }
-            }
-            callback(videos)
-        }
+    override fun fetchVideosFromFireStore(): CollectionReference {
+        return fireStore.collection(VIDEO_COLLECTION)
+    }
+
+    override fun getSearchQuery(tittle: String?): Query {
+        return fireStore.collection(VIDEO_COLLECTION).orderBy("lowerCaseTitle").startAt(tittle)
+            .endAt(tittle + "\uf8ff")
     }
 
     companion object {
         private const val VIDEO_COLLECTION = "videos"
         private const val VIDEO_TITLE = "title"
+        private const val VIDEO_LOWERCASE_TITLE = "lowerCaseTitle"
         private const val VIDEO_URL = "url"
         private const val USER = "user"
     }
