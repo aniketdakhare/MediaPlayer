@@ -11,6 +11,7 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions
 class VideoViewAdapter(
     options: FirestorePagingOptions<Video>,
     private val application: Application,
+    val playVideo: (Video) -> Unit
 ) : FirestorePagingAdapter<Video, VideoViewHolder>(options) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
@@ -21,6 +22,6 @@ class VideoViewAdapter(
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int, video: Video) {
         holder.bind(video, application)
-        holder.view.setOnClickListener {  }
+        holder.view.setOnClickListener { playVideo(video) }
     }
 }

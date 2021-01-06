@@ -1,5 +1,6 @@
 package com.example.mediaplayer.ui.mainactivity.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +17,8 @@ import com.example.mediaplayer.databinding.ActivityMainBinding
 import com.example.mediaplayer.ui.home.view.HomeFragment
 import com.example.mediaplayer.ui.login.view.LoginFragment
 import com.example.mediaplayer.data.UserRepository
+import com.example.mediaplayer.data.model.Video
+import com.example.mediaplayer.ui.fullscreen.view.FullScreen
 import com.example.mediaplayer.ui.register.view.RegisterFragment
 import com.example.mediaplayer.ui.setting.view.SettingFragment
 import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModel
@@ -73,6 +76,16 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel.uploadMenuStatus.observe(this, {
             menuStatus = it
         })
+        sharedViewModel.videoToPlayOnFullScreen.observe(this, { video ->
+            video?.let { goToFullScreenPage(it) }
+        })
+    }
+
+    private fun goToFullScreenPage(video: Video) {
+        val intent = Intent(this, FullScreen::class.java)
+        intent.putExtra("title", video.title)
+        intent.putExtra("url", video.url)
+        startActivity(intent)
     }
 
     private fun goToStartAppPage() {

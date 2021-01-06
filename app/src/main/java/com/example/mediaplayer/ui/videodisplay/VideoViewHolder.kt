@@ -2,6 +2,7 @@ package com.example.mediaplayer.ui.videodisplay
 
 import android.app.Application
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -42,19 +43,27 @@ class VideoViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
     fun bind(videoDetails: Video, application: Application) {
         tittle.text = videoDetails.title
 
-        val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
-        val trackSelector: TrackSelector = DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(application, trackSelector) as SimpleExoPlayer
+        try {
+            val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
+            val trackSelector: TrackSelector = DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
+            simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(application, trackSelector) as SimpleExoPlayer
 
-        val videoURI = Uri.parse(videoDetails.url)
+            val videoURI = Uri.parse(videoDetails.url)
 
-        val dataSourceFactory = DefaultHttpDataSourceFactory("videos")
-        val extractorsFactory: ExtractorsFactory = DefaultExtractorsFactory()
-        val mediaSource: MediaSource =
-            ExtractorMediaSource(videoURI, dataSourceFactory, extractorsFactory, null, null)
+            val dataSourceFactory = DefaultHttpDataSourceFactory("videos")
+            val extractorsFactory: ExtractorsFactory = DefaultExtractorsFactory()
+            val mediaSource: MediaSource =
+                ExtractorMediaSource(videoURI, dataSourceFactory, extractorsFactory, null, null)
 
-        simpleExoPlayerView.player = simpleExoPlayer
-        simpleExoPlayer.prepare(mediaSource)
-        simpleExoPlayer.playWhenReady = false
+            simpleExoPlayerView.player = simpleExoPlayer
+            simpleExoPlayer.prepare(mediaSource)
+            simpleExoPlayer.playWhenReady = false
+        }catch (e: Exception){
+            Log.e(Companion.TAG, "bind: $e", )
+        }
+    }
+
+    companion object {
+        private const val TAG = "VideoViewHolder"
     }
 }

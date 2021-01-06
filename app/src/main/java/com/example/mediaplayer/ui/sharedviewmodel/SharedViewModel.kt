@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mediaplayer.data.IUserRepository
 import com.example.mediaplayer.data.model.User
+import com.example.mediaplayer.data.model.Video
 
 class SharedViewModel(
     private val userRepository: IUserRepository,
@@ -35,6 +36,9 @@ class SharedViewModel(
 
     private val _queryText = MutableLiveData<String>()
     val queryText = _queryText as LiveData<String>
+
+    private val _videoToPlayOnFullScreen = MutableLiveData<Video>()
+    val videoToPlayOnFullScreen = _videoToPlayOnFullScreen as LiveData<Video>
 
     fun setQueryText(string: String?) {
         _queryText.value = string
@@ -68,6 +72,10 @@ class SharedViewModel(
 
     fun setUploadMenuStatus(status: Boolean) {
         _uploadMenuStatus.value = status
+    }
+
+    fun setVideoToPlayOnFullScreen(video: Video) {
+        _videoToPlayOnFullScreen.value = video
     }
 
     companion object {

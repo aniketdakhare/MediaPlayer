@@ -56,16 +56,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = VideoViewAdapter(homeViewModel.getOptionToFetchVideos(config), requireActivity().application)
+        adapter = VideoViewAdapter(homeViewModel.getOptionToFetchVideos(config), requireActivity().application){
+            sharedViewModel.setVideoToPlayOnFullScreen(it)
+        }
         binding.videosList.layoutManager = LinearLayoutManager(requireContext())
         binding.videosList.adapter = adapter
 
         sharedViewModel.queryText.observe(viewLifecycleOwner, {
-            adapter = VideoViewAdapter(homeViewModel.searchVideos(it, config), requireActivity().application)
+            adapter = VideoViewAdapter(homeViewModel.searchVideos(it, config), requireActivity().application){ video ->
+                sharedViewModel.setVideoToPlayOnFullScreen(video)
+            }
             adapter.startListening()
             binding.videosList.adapter = adapter
         })
     }
+
+
 
     override fun onStart() {
         super.onStart()
