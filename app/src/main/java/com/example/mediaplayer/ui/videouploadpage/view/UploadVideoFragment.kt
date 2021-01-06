@@ -8,12 +8,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import android.webkit.MimeTypeMap
-import androidx.fragment.app.Fragment
 import android.widget.MediaController
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.mediaplayer.R
 import com.example.mediaplayer.data.UserRepository
@@ -28,6 +27,7 @@ import com.example.mediaplayer.util.Failed
 import com.example.mediaplayer.util.Loading
 import com.example.mediaplayer.util.Succeed
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class UploadVideoFragment : Fragment() {
 
@@ -63,8 +63,10 @@ class UploadVideoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mediaController = MediaController(requireContext())
+        mediaController.setAnchorView(binding.videoView)
+        binding.videoView.keepScreenOn = true
         binding.videoView.setMediaController(mediaController)
-        binding.videoView.start()
+
         binding.browseButton.setOnClickListener {
             val openGalleryIntent =
                 Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
@@ -88,7 +90,14 @@ class UploadVideoFragment : Fragment() {
         if (requestCode == 220 && resultCode == Activity.RESULT_OK)
             intent?.data?.let {
                 videoUri = it
+
                 binding.videoView.setVideoURI(it)
+
+                binding.videoView.setOnPreparedListener {
+                }
+                binding.videoView.setOnCompletionListener {
+                    binding.videoView.stopPlayback()
+                }
             }
     }
 
@@ -98,18 +107,20 @@ class UploadVideoFragment : Fragment() {
         pd.setTitle("Video Uploader")
         pd.show()
 
+
+
         val title = binding.videoTittle.text.toString()
         val fileName = "${System.currentTimeMillis()}.${getExtension()}"
         uploadVideoViewModel.uploadVideo(VideoDetails(videoUri, title, fileName))
 
         uploadVideoViewModel.videoUploadingStatus.observe(viewLifecycleOwner, {
             when (it) {
-                is Succeed ->{
+                is Succeed -> {
                     pd.dismiss()
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                     binding.videoView.resume()
                 }
-                is Failed ->{
+                is Failed -> {
                     pd.dismiss()
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                     binding.videoView.resume()

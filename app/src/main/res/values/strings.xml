@@ -26,5 +26,6 @@
     <string name="browse_video">Browse Video</string>
     <string name="upload_video">Upload Video</string>
     <string name="video_tittle">Video Tittle</string>
+    <string name="video_title">Video Title</string>
 
 </resources>

@@ -56,12 +56,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = VideoViewAdapter(homeViewModel.getOptionToFetchVideos(config))
+        adapter = VideoViewAdapter(homeViewModel.getOptionToFetchVideos(config), requireActivity().application)
         binding.videosList.layoutManager = LinearLayoutManager(requireContext())
         binding.videosList.adapter = adapter
 
         sharedViewModel.queryText.observe(viewLifecycleOwner, {
-            adapter = VideoViewAdapter(homeViewModel.searchVideos(it, config))
+            adapter = VideoViewAdapter(homeViewModel.searchVideos(it, config), requireActivity().application)
             adapter.startListening()
             binding.videosList.adapter = adapter
         })
