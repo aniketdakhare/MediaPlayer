@@ -3,6 +3,8 @@ package com.example.mediaplayer.ui.videouploadpage.view
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.mediaplayer.R
 import com.example.mediaplayer.data.UserRepository
 import com.example.mediaplayer.data.VideoRepository
@@ -91,6 +94,7 @@ class UploadVideoFragment : Fragment() {
             intent?.data?.let {
                 videoUri = it
 
+
                 binding.videoView.setVideoURI(it)
 
                 binding.videoView.setOnPreparedListener {
@@ -107,11 +111,11 @@ class UploadVideoFragment : Fragment() {
         pd.setTitle("Video Uploader")
         pd.show()
 
-
-
         val title = binding.videoTittle.text.toString()
         val fileName = "${System.currentTimeMillis()}.${getExtension()}"
+
         uploadVideoViewModel.uploadVideo(VideoDetails(videoUri, title, fileName))
+
 
         uploadVideoViewModel.videoUploadingStatus.observe(viewLifecycleOwner, {
             when (it) {
