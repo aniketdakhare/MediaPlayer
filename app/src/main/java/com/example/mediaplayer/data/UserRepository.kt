@@ -17,7 +17,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import org.json.JSONObject
 
-
 class UserRepository : IUserRepository {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var fireStore: FirebaseFirestore

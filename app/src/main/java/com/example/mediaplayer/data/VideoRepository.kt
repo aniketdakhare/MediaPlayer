@@ -8,7 +8,6 @@ import com.example.mediaplayer.util.Loading
 import com.example.mediaplayer.util.Status
 import com.example.mediaplayer.util.Succeed
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -35,7 +34,7 @@ class VideoRepository : IVideoRepository {
         fileRef.putFile(videoDetails.videoFile)
             .addOnSuccessListener {
                 fileRef.downloadUrl.addOnSuccessListener { uri ->
-                    uploadVideoToFireStore(videoDetails.videoTitle, uri, callback)
+                    uploadVideoToFireStore(videoDetails, uri, callback)
                 }
             }.addOnProgressListener {
                 val percent = (100 * it.bytesTransferred) / it.totalByteCount
@@ -43,13 +42,14 @@ class VideoRepository : IVideoRepository {
             }
     }
 
-    private fun uploadVideoToFireStore(videoTitle: String, uri: Uri, callback: (Status) -> Unit) {
+    private fun uploadVideoToFireStore(video: VideoDetails, uri: Uri, callback: (Status) -> Unit) {
         val videoDetails: MutableMap<String, Any> = HashMap()
 
-        videoDetails[VIDEO_LOWERCASE_TITLE] = videoTitle.toLowerCase()
-        videoDetails[VIDEO_TITLE] = videoTitle
+        videoDetails[VIDEO_LOWERCASE_TITLE] = video.videoTitle.toLowerCase()
+        videoDetails[VIDEO_TITLE] = video.videoTitle
         videoDetails[VIDEO_URL] = uri.toString()
-        videoDetails[USER] = firebaseAuth.currentUser!!.uid
+        videoDetails[OWNER] = video.owner
+        videoDetails[TIME] = System.currentTimeMillis()
 
         fireStore.collection(VIDEO_COLLECTION).document()
             .set(videoDetails)
@@ -57,8 +57,8 @@ class VideoRepository : IVideoRepository {
             .addOnFailureListener { callback(Failed("Error while Uploading video", OTHER)) }
     }
 
-    override fun fetchVideosFromFireStore(): CollectionReference {
-        return fireStore.collection(VIDEO_COLLECTION)
+    override fun fetchVideosFromFireStore(): Query {
+        return fireStore.collection(VIDEO_COLLECTION).orderBy("time", Query.Direction.DESCENDING)
     }
 
     override fun getSearchQuery(tittle: String?): Query {
@@ -71,6 +71,7 @@ class VideoRepository : IVideoRepository {
         private const val VIDEO_TITLE = "title"
         private const val VIDEO_LOWERCASE_TITLE = "lowerCaseTitle"
         private const val VIDEO_URL = "url"
-        private const val USER = "user"
+        private const val OWNER = "owner"
+        private const val TIME = "time"
     }
 }

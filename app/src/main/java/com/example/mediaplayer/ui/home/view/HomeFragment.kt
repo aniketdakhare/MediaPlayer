@@ -5,13 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mediaplayer.R
 import com.example.mediaplayer.data.UserRepository
@@ -23,6 +21,7 @@ import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModel
 import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModelFactory
 import com.example.mediaplayer.ui.videodisplay.VideoViewAdapter
 import com.example.mediaplayer.ui.videodisplay.VideoViewHolder
+import kotlin.properties.Delegates
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -34,6 +33,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         .setInitialLoadSizeHint(6)
         .setPageSize(3)
         .build()
+    private var holder: VideoViewHolder? by Delegates.vetoable(null){ _, oldValue, newValue ->
+        oldValue?.setPlayerStatus(false)
+        newValue?.setPlayerStatus(true)
+        return@vetoable true
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,37 +68,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         adapter = VideoViewAdapter(homeViewModel.getOptionToFetchVideos(config)) {
             sharedViewModel.setVideoToPlayOnFullScreen(it)
         }
-        binding.videoRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.videoRecyclerView.layoutManager = object : LinearLayoutManager(requireContext()){
+            override fun onLayoutCompleted(state: RecyclerView.State?) {
+                super.onLayoutCompleted(state)
+                Log.e(TAG, "onLayoutCompleted: $state")
+                playCenterVideo()
+            }
+        }
         binding.videoRecyclerView.adapter = adapter
 
-//        val snapHelper = LinearSnapHelper()
-//        val snapView = snapHelper.findSnapView(binding.videoRecyclerView.layoutManager)
-//        val snapPosition = snapView?.let {
-//            (binding.videoRecyclerView.layoutManager as LinearLayoutManager).getPosition(it) }
-//        val demo = (binding.videoRecyclerView.layoutManager as LinearLayoutManager).findViewByPosition(5)
-        binding.videoRecyclerView.viewTreeObserver.addOnPreDrawListener {
-            Log.e(TAG, "onViewCreated: addOnPreDrawListener")
-            playCenterVideo(binding.videoRecyclerView)
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    Log.e(TAG, "onPreDraw: ", )
-                    binding.videoRecyclerView.viewTreeObserver.removeOnPreDrawListener(this)
-                    binding.videoRecyclerView.addOnScrollListener(object :
-                        RecyclerView.OnScrollListener() {
-                        override fun onScrollStateChanged(
-                            recyclerView: RecyclerView,
-                            newState: Int
-                        ) {
-                            Log.e(TAG, "onScrollStateChanged: ", )
-                            super.onScrollStateChanged(recyclerView, newState)
-                            playCenterVideo(binding.videoRecyclerView)
-                        }
-                    })
-                    return true
-                }
+        binding.videoRecyclerView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(
+                recyclerView: RecyclerView,
+                newState: Int
+            ) {
+                Log.e(TAG, "onScrollStateChanged: $newState ", )
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) playCenterVideo()
             }
-            return@addOnPreDrawListener true
-        }
+        })
 
         sharedViewModel.queryText.observe(viewLifecycleOwner, {
             adapter = VideoViewAdapter(homeViewModel.searchVideos(it, config)) { video ->
@@ -105,15 +98,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         })
     }
 
-    private fun playCenterVideo(recyclerView: RecyclerView) {
-        Log.e(TAG, "playCenterVideo: ")
+    private fun playCenterVideo() {
         val firstItemPosition =
             (binding.videoRecyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
-        val lastItemPosition =
-            (binding.videoRecyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-        val centerPosition = (firstItemPosition + lastItemPosition) / 2
+        if (firstItemPosition == RecyclerView.NO_POSITION) return
         val demo = binding.videoRecyclerView.findViewHolderForAdapterPosition(firstItemPosition)
-        (demo as VideoViewHolder).setPlayerStatus( true)
+        Log.e(TAG, "playCenterVideo: firstItemPosition:: $firstItemPosition")
+        holder = (demo as VideoViewHolder)
     }
 
     override fun onStart() {

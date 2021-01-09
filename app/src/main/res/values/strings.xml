@@ -27,5 +27,6 @@
     <string name="upload_video">Upload Video</string>
     <string name="video_tittle">Video Tittle</string>
     <string name="video_title">Video Title</string>
+    <string name="owner">Owner</string>
 
 </resources>

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mediaplayer.R
 import com.example.mediaplayer.data.model.Video
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -18,6 +19,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 
 class VideoViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
     private val tittle: TextView = view.findViewById(R.id.vtitle)
+    private val owner: TextView = view.findViewById(R.id.owner)
 
     private val simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(view.context.applicationContext)
     private val playerView: PlayerView = (view.findViewById(R.id.exoplayerview) as PlayerView).also {
@@ -27,6 +29,7 @@ class VideoViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(videoDetails: Video) {
         tittle.text = videoDetails.title
+        owner.text = videoDetails.owner
         try {
             val videoURI = Uri.parse(videoDetails.url)
 
@@ -36,6 +39,7 @@ class VideoViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
                 ExtractorMediaSource(videoURI, dataSourceFactory, extractorsFactory, null, null)
 
             simpleExoPlayer.prepare(mediaSource)
+            simpleExoPlayer.repeatMode = SimpleExoPlayer.REPEAT_MODE_ONE
             setPlayerStatus(false)
             simpleExoPlayer.playbackState
             simpleExoPlayer.volume = 0f

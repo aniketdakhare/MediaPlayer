@@ -12,13 +12,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.mediaplayer.R
-import com.example.mediaplayer.ui.appstartpage.view.AppStartFragment
-import com.example.mediaplayer.databinding.ActivityMainBinding
-import com.example.mediaplayer.ui.home.view.HomeFragment
-import com.example.mediaplayer.ui.login.view.LoginFragment
 import com.example.mediaplayer.data.UserRepository
 import com.example.mediaplayer.data.model.Video
+import com.example.mediaplayer.databinding.ActivityMainBinding
+import com.example.mediaplayer.ui.appstartpage.view.AppStartFragment
 import com.example.mediaplayer.ui.fullscreen.view.FullScreen
+import com.example.mediaplayer.ui.home.view.HomeFragment
+import com.example.mediaplayer.ui.login.view.LoginFragment
 import com.example.mediaplayer.ui.register.view.RegisterFragment
 import com.example.mediaplayer.ui.setting.view.SettingFragment
 import com.example.mediaplayer.ui.sharedviewmodel.SharedViewModel

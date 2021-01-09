@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 
-
 class FullScreen : AppCompatActivity() {
 
     private var player: SimpleExoPlayer? = null
@@ -37,7 +36,6 @@ class FullScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_full_screen)
-
 
         playerView = findViewById(R.id.exoplayer_fullscreen)
         textView = findViewById(R.id.tv_fullscreen)
